@@ -7,7 +7,7 @@ scene3 = ColorClip(size=(1280, 720), color=(100, 100, 100), duration=4)
 video = concatenate_videoclips([scene1, scene2, scene3])
 
 video.write_videofile(
-    "/mnt/c/Users/HP/Desktop/VIDEO-AD-EDITOR/first_10s.mp4",
+    "first_10s.mp4",
     fps=24,
     codec="libx264",
     audio=False
