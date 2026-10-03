@@ -7,6 +7,7 @@ from video_editor.audio import load_audio, fit_audio_to_duration, add_audio
 from video_editor.export import export_video
 from video_editor.presets import get_preset
 from video_editor.formats import get_format
+from video_editor.product_loader import load_product_images
 
 
 def create_campaign(
@@ -24,6 +25,9 @@ def create_campaign(
 ):
     if not products:
         raise ValueError("Aucun produit fourni.")
+
+    if isinstance(products, (str, Path)):
+        products = load_product_images(products)
 
     if size is None:
         size = get_format(format_name)["size"]
