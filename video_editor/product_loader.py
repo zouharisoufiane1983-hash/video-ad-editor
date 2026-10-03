@@ -1,6 +1,14 @@
 from pathlib import Path
+import re
 
 SUPPORTED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
+
+
+def natural_sort_key(path):
+    return [
+        int(part) if part.isdigit() else part.lower()
+        for part in re.split(r"(\d+)", path.name)
+    ]
 
 
 def load_product_images(folder):
@@ -15,7 +23,7 @@ def load_product_images(folder):
             for path in folder.iterdir()
             if path.is_file() and path.suffix.lower() in SUPPORTED_EXTENSIONS
         ),
-        key=lambda path: path.name.lower(),
+        key=natural_sort_key,
     )
 
     if not images:
