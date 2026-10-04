@@ -22,6 +22,9 @@ def create_campaign(
     preset="luxury",
     transition_duration=0.6,
     format_name="landscape",
+    seconds_per_product=None,
+    product_durations=None,
+    duration_mode="total",
 ):
     if not products:
         raise ValueError("Aucun produit fourni.")
@@ -44,13 +47,44 @@ def create_campaign(
     if not valid_products:
         raise FileNotFoundError("Aucun produit valide trouvé.")
 
+    if duration_mode not in {"total", "fixed", "custom", "auto"}:
+        raise ValueError(
+            "duration_mode doit etre : total, fixed, custom ou auto."
+        )
+
+    if duration_mode == "custom":
+        if product_durations is None:
+            raise ValueError(
+                "product_durations est obligatoire avec duration_mode='custom'."
+            )
+        sequence_total = None
+        sequence_seconds = 7.0
+
+    elif duration_mode == "fixed":
+        if seconds_per_product is None:
+            raise ValueError(
+                "seconds_per_product est obligatoire avec duration_mode='fixed'."
+            )
+        sequence_total = None
+        sequence_seconds = seconds_per_product
+
+    elif duration_mode == "auto":
+        sequence_total = None
+        sequence_seconds = 7.5 if seconds_per_product is None else seconds_per_product
+
+    else:
+        sequence_total = duration
+        sequence_seconds = 7.0
+
     video = build_product_sequence(
         valid_products,
-        total_duration=duration,
+        total_duration=sequence_total,
         size=size,
         transition_duration=transition_duration,
         ken_burns_start=style["ken_burns_start"],
         ken_burns_end=style["ken_burns_end"],
+        seconds_per_product=sequence_seconds,
+        product_durations=product_durations,
     )
 
     if logo and Path(logo).is_file():
